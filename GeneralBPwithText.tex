@@ -1,0 +1,779 @@
+\documentclass[12 pt]{article}        	%sets the font to 12 pt and says this is an article (as opposed to book or other documents)
+\usepackage{amsfonts, amssymb}
+\usepackage{amsmath}
+% \usepackage{xcolor}
+% \pagecolor{black}
+% \color{white}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{esint}
+\usepackage{mathabx}
+\usepackage{tikz-cd}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\pagestyle{myheadings}                       
+\newcommand{\qed}[0]{$\square$}    
+% personalized commands 
+\newcommand{\inv}{^{-1}}
+\newcommand{\bij}{\mathrlap{\hookrightarrow}\rightarrow}
+\newcommand{\onto}{\twoheadrightarrow}
+\newcommand{\z}{\mathbb Z}
+\newcommand{\real}{\mathbb R}
+\newcommand{\q}{\mathbb Q}
+\newcommand{\complex}{\mathbb C}
+\newcommand{\n}{\mathbb N}
+\newcommand{\cont}{\lightning}
+\newcommand{\osub}{\stackrel{\circ}{\subset}}
+\newcommand{\csub}{\stackrel{\bullet}{\subset}}
+\newcommand{\A}{\mathbb A}
+\newcommand{\p}{\mathbb P}
+\newcommand{\spec}{\text{Spec }}
+\newcommand{\mpp}{\mathfrak{p}}
+\usepackage{realhats}
+\input RoyalIn.fd
+\newcommand*\initfamily{\usefont{U}{RoyalIn}{xl}{n}}
+\usepackage{jigsaw}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\newcommand{\batmanPic}[1]{
+	\begin{tikzpicture}[baseline=0em, scale=#1]
+		\draw[fill,black]   (-0.25,1.48) .. controls (-0.1,1.5) and (0.1,1.5) .. (0.25,1.48) -- (0.35,1.92) .. controls (0.425,1.8) and (0.41,1.3) .. (0.45,1.2) .. controls (0.6,1.05) and (1.96,1.05) .. (1.98,2.08) -- (5.93,2.08) .. controls (4.2,1.45) and (4,0.3) .. (4.2,-0.28) .. controls (2.4,-0.09) and (0.4,-0.5) .. (0,-2.052) .. controls (-0.4,-0.5) and (-2.4,-0.09) .. (-4.2,-0.28) .. controls (-4,0.3) and (-4.2,1.45) .. (-5.93,2.08) -- (-1.98,2.08) .. controls (-1.96,1.05) and (-0.6,1.05) .. (-0.45,1.2) .. controls (-0.41,1.3) and (-0.425,1.8) .. (-0.35,1.92) -- (-0.25,1.48);
+	\end{tikzpicture}
+}
+\usepackage{halloweenmath}
+\usepackage{units}
+
+\usepackage{amsthm}
+\newtheorem{definition}{Definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{prop}{Proposition}
+\newtheorem{cor}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{ex}{Example}
+\newtheorem{remark}{Remark}
+\newcommand{\bruhlt}{\mathrel{<\!\!\!\!\cdot}}
+
+\title{An Introduction to Algebraic Geometry}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\begin{center}
+    \textbf{Author}
+    
+    Rebecca Field PhD, Timothy Tarter 
+    
+    James Madison University    
+
+    Department of Mathematics
+    
+\end{center}
+
+\begin{abstract}
+    In this series of lectures, we will recreate results from Professor Joe Harris's Math 137 course at Harvard, as transcribed in his book, ``Algebraic Geometry: a First Course," as well as results from Professor Ravi Vakil's book ``The Rising Sea." The first few lectures of this course will deal largely with classical topics in geometry, whereas the second half will focus more on machinery and applications of algebraic geometry, particularly with a focus towards enumerative geometry. These notes are written by Timothy Tarter and revised by Rebecca Field; any further revisions / suggestions may be given at \url{tartertx@dukes.jmu.edu}. 
+\end{abstract}
+\vspace{11in}
+\tableofcontents
+$\newline$
+\textbf{Important Remark About Originality:} Everything in this paper is adapted, at times verbatim, from Joe Harris's and Ravi Vakil's books, as mentioned in the abstract. In this way, I mean imitation to be flattery, as I admire Professor Harris's and Professor Vakil's work greatly; any exposition which I add in this paper on their work is designed to make algebraic geometry accessible for a series of seminar talks which I am giving to the faculty at James Madison University. 
+
+$\newline$\textbf{Acknowledgments:} I would like to first thank Dr. Rebecca Field for her generous mentorship over the last few years; I would not be the mathematician I am today, let alone an aspiring algebraic geometer without her help and support. To Dr. Field - thank you for letting me go down my algebro-geometric rabbit holes. It has changed my life! Next, I would like to thank Professor Joe Harris and his students (Tyler Chamberlain, Dhruv Goel, and Stephanie Chen) for their support and feedback over the past few months. Finally, I would like to thank the Department of Mathematics at James Madison University, for treating me so well these past three years, and allowing us to run this seminar.
+
+\vspace{11in}
+
+
+
+
+
+
+
+
+\section{Examples of (Projective) Varieties}
+Algebraic geometry is (loosely) the study of objects known as \textit{algebraic varieties}, better known as the zero locus of a set of polynomials. Generally, these split into four types:
+\begin{enumerate}
+    \item Affine varieties (typically just the zero locus of polynomial equations over $\complex^n$),
+    \item Quasi-affine varieties (``Zariski-open" subsets of an affine variety),
+    \item Projective varieties (the zero locus of homogeneous polynomial equations of degree $d$ over $\mathbb P^n$), and,
+    \item Quasi-projective varieties (``Zariski-open" subsets of a projective variety).
+\end{enumerate}
+Affine varieties are the seemingly natural case of a variety: namely, we have been working with them our entire lives. Linear algebra is essentially the study of linear affine varieties, and most geometry that you are familiar with in the plane has occurred in the ``affine case." 
+
+$\newline$As a general convention, we will denote $\mathbb{K}$ to be some algebraically closed field, typically $\complex$. Then,
+\begin{definition}
+    [Affine Space] 
+    \[
+    \mathbb A^n = \{(x_1, \dots, x_n) \mid x_i \in \mathbb K\}
+    \]
+\end{definition}
+$\newline$
+is how we will denote affine space. Affine space has some important properties that are slightly different from $\mathbb K^n$; namely, we will consider varieties up to linear transformation of points in affine space. That said, we will spend very little time on affine space, because it turns out that it has some theoretical holes which make doing geometry difficult.
+
+$\newline$
+Consider the equation 
+\[
+y-\frac{1}{x} \in \complex [x,y].
+\]
+If we want to understand it as an affine variety,
+\[
+V(y-\frac{1}{x}) = \{(x,y) \in \complex^2 \mid y-\frac{1}{x} =0\},
+\]
+it seems like we should get some anomalous/ weird sort of variety. However, what if we could include some point for $x$ at infinity, that could give us a nontrivial variety? It turns out that, not only can we build this construction sensibly, but that we will also get a well-defined point at $x=0$, which will make $y-\frac{1}{x}$ into a smooth projective curve (variety), with no ``missing" or singular points. 
+
+$\newline$Before we address this construction, though, it may be beneficial to understand how projective space came about as a formal object of study. 
+
+\subsection{(The History of) Projective Space}
+As it stands, algebraic geometry is one of the richest fields for math historians, as much of its development happened post-antiquity, and so it has been well documented. Arguably, one of my favorite aspects of learning geometry over the past year from Dr. Field and a conglomeration of Joe Harris' students has been discovering what roles history and geography have played in the development of our modern framework of mathematics. 
+
+$\newline$At any rate, we want to establish three things:
+\begin{enumerate}
+    \item How did the legitimization of the complex numbers lead to the notion of ``projective space?"
+    \item What is projective space, and what do projective curves look like?
+    \item What is the Grassmannian, and how can we use it in projective geometry?
+\end{enumerate}
+Towards this first point, here is a brief history of projective space. The first primitive notions of this concept were by the \textit{artist} \textbf{Filippo Brunelleschi}, who formalized the idea of linear perspective circa \textbf{1420}. 
+$\newline$
+Later, in \textbf{1639}, \textbf{Girard Desargues} introduced the concept of points at infinity, and invariance under projection. This was seen through concepts through constructions of similar triangles in the plane:
+$\newline$
+Then, in \textbf{1640}, \textbf{Blaise Pascal} proved Pascal's theorem for hexagons inscribed in conics, which states that if an arbitrary hexagon is inscribed in a conic section (circle, ellipse, or hyperbola), the three pairs of opposite sides intersect at three points which lie on a straight line. This was one of the first use of projective geometry in a meaningful way! 
+
+$\newline$While large developments of projective geometry lay dormant for almost a century, in \textbf{1812}, \textbf{Jean-Victor Poncelet} (a french mathematician) was imprisoned in Russia following Napoleon's campaign. During his two year imprisonment, Poncelet resolved two major issues in mathematics, resulting in his 1814 publication ``Traité des propriétés projectives des figures (Treatise on the projective properties of figures)":
+\begin{enumerate}
+    \item The complex numbers have a geometric interpretation, namely, we need them for algebraic curves to behave in a geometrically consistent manner, and,
+    \item Geometry should study properties invariant under projection!
+\end{enumerate}
+Moreover, in terms of properties invariant under projection, we should also have properties which are invariant under continuous deformation. 
+
+$\newline$To clarify, Poncelet never defined coordinates for the projective plane (like we will momentarily), but rather, Poncelet treated the projective plane as this parameter space where parallel lines meet at infinity, making all curves closed loops.
+
+$\newline$That said, it wasn't long until coordinates for the projective plane (and more generally projective space) were realized; only thirteen years later, in \textbf{1827}, \textbf{August Ferdinand Mobius} introduced homogeneous coordinates: \textbf{$\mathbb P^n$ is the collection of lines through the origin of $\complex^{n+1}$.} Almost immediately after, \textbf{Julius Plucker} developed a more general coordinate system for lines and curves in projective space. 
+
+$\newline$Nowadays, we mostly use the machinery built by 20-th century mathematicians, \textbf{Oscar Zariski} and \textbf{Alexander Grothendieck}, which uses the construction of schemes to cement certain properties and yield benefits like divisors, line bundles, and cohomology. 
+
+$\newline$At any rate, enough history: if projective space is lines through the origin, then how can we construct it in terms of coordinates? let $V$ be an $n+1$ dimensional vector space over $\mathbb K$.  Consider the set,
+\[
+\hspace{-.4in}{\mathbb P}V = \{[x_0: \dots \text{ : } x_n] \mid (x_0,...,x_n)\in V \text{ not all }x_i \text{ are zero}, [x_0:\dots \text{ : }x_n] = [\lambda x_0:\dots \text{ : }\lambda x_n] \text{ for all } \lambda\in\mathbb K, \lambda\neq0 \}.
+\]
+If $V=\mathbb K^{n+1}$, we write $\mathbb{P}V=\mathbb P^n$. This is the set of point in $n$ dimensional projective space. However, there is a clear open cover, where for 
+\[
+U_i = \{[x_0\text{ : ... : }x_n] \mid x_i \neq 0\},
+\]
+there exists a (bi)rational map,
+\[
+\varphi_i: U_i \to \mathbb A^n,
+\]
+for example, $\varphi_0$ sends
+\[
+[x_0\text{ : ... : }x_n]  \mapsto \left(\frac{x_1}{x_0}, \dots, \frac{x_n}{x_0}\right).
+\]
+In this way, $\varphi$ gives an isomorphism to affine homogeneous coordinates, which allow us to view ``affine slices" of any projective curve. 
+
+
+\subsection{Intuition for Projective Curves}
+As we've defined projective points, they are invariant up to scaling. So, a projective curve $F$ of degree $d$ should take $F(\lambda P) = \lambda^d F(P)$. Moreover, to have 
+\[
+F(\lambda P) \mapsto \lambda^d F(P),
+\]
+all terms of $F$ should be degree $d$. Thus, we will refer to projective curves in terms of ``homogeneous polynomials." 
+
+$\newline$Example: Projectivization of Conics, $y=\frac{1}{x}$.
+
+$\newline$Example: Projectivization of Elliptic Curves, $y^2 = x^3+ax+b$.
+
+
+
+\subsection{Linear Spaces \& the Grassmannian} 
+Maybe the first important fundamental of projective varieties besides projective curves should be linear subspaces of projective space. After all, later, we will want to ask questions about intersections of algebraic curves with linear subspaces, and the only way to classify answers to such problems is with well-defined machinery! This will largely take place through the Grassmannian, but we can consider other examples of linear spaces first. 
+
+$\newline$It is an interesting fact that most (theoretical) problems in linear algebra can be answered from an algebro-geometric standpoint. We will talk at length about dimension and codimension, but in the linear case, dimension behaves as we want it to, and so does codimension. Namely, for $X\subset Y$ a linear subspace,
+\[
+\text{codim}_YX = \dim Y - \dim X.
+\]
+Here are some examples of linear spaces as projective varieties.
+
+\begin{definition}
+    [Linear (Projective) Subspace] Inclusion of vector spaces induces inclusions of linear projective subspaces. Namely, for vector spaces \[W \cong \mathbb K^{k+1} \hookrightarrow V \cong \mathbb K^{n+1}\] induces a map
+    \[
+    \mathbb PW \hookrightarrow \mathbb PV
+    \]
+    whose image is a linear subspace, or a $k$-plane of $\mathbb PV$, which you can picture as $\mathbb P^{n}$ up to isomorphism. In the case $k = n-1$, we call this image a hyperplane, and in the case where $k=1$, we call it a line.
+\end{definition}
+$\newline$
+\textbf{Aside:} A hyperplane is a special case of a hypersurface:
+\begin{definition}
+    [Hypersurface] A hyperplane $H \subset \mathbb P^n$ is the zero locus of a homogeneous polynomial $F([x_0:\dots: x_n])$ of degree $d$, of codimension $1$ (in some sense, dimension $n-1$).
+\end{definition}
+$\newline$ We are particularly interested in hypersurfaces as they relate to tangent planes of projective varieties; namely, many interesting questions can be posed and answered in terms of the following two objects:
+
+\begin{definition}
+    [Projective Dual Space, $\mathbb{P}^{n*}$] We define the dual projective space to be 
+    \[
+    \mathbb P^{n*} =\{\text{hyperplanes in }\mathbb P^n\}.
+    \]
+    Notably, this is the set of all possible tangent planes to surfaces in $\mathbb P^n$.
+\end{definition}
+
+\begin{definition}
+    [Gauss Map] Given a smooth projective variety $X \subset \mathbb P^n$, we define 
+    \[
+    \mathcal G_X : \mathbb P^n \to \mathbb P^{n*}
+    \]
+    to be the map sending 
+    \[
+    X \mapsto \{\text{hyperplanes tangent to }X\}.
+    \]
+\end{definition}
+
+$\newline$Remark: this allows us to (eventually) ask enumerative questions about hyperplanes lying on varieties and their intersections. 
+
+$\newline$The generalization of our notion of linear projective subspaces is called the Grassmannian. We will discuss the Grassmannian at length in lecture six.
+
+\begin{definition}
+    [The Grassmannian]\[ \mathbb G(k,n) = \{\Lambda \subseteq V \mid \dim \Lambda = k, \dim V = n \}\]
+\end{definition}
+
+$\newline$\textbf{Remark:} The Plucker embedding
+\[
+\mathbb G(k,n) \hookrightarrow \mathbb P(\bigwedge^n V)
+\]
+makes the Grassmannian a projective variety of dimension ${n\choose k}-1$.
+
+\subsection{Finite Sets}
+Any finite subset $\Gamma \subset \mathbb P^n$ is a variety; given any $q \not\in \Gamma$, we can find a polynomial on $\mathbb P^n$ vanishing on all $p_i \in \Gamma$ but not at $q$, just by taking a product of homogeneous linear forms $L_i$, each vanishing at $p_i$, but not $q$. So, if $\Gamma$ consists of $d$ points, it may be described by polynomials of degree $d$ or less. Moreover, strict equality of degree will occur when no syzygy (three-point-or-more case of collinearity) exists in $\Gamma$. 
+
+$\newline$We say that a finite set of points are \textit{in general position} when no $n+1$ or fewer of them are linearly dependent, as vectors. \textbf{It may help to draw a picture here.}
+
+\begin{thm}
+    [From Harris, 1.4] If $\Gamma \subset \mathbb P^n$ is any collection of $d \leq 2n$ points in general position, then $\Gamma$ may be described as the zero locus of quadratic polynomials.
+\end{thm}
+$\newline$\textbf{Proof:} Let $\Gamma =\{p_1, \dots, p_{2n}\}$. Suppose that $q \in \mathbb P^n$ is any point such that every quadratic vanishing on $\Gamma$ vanishes at $q$; we want to then show that $q\in \Gamma$. To do this, observe that by hypothesis, if 
+\[
+\Gamma = \Gamma_1 \cup \Gamma_2
+\]
+is any decomposition of $\Gamma$ into two sets of cardinality $n$, then each $\Gamma_i$ will span a hyperplane, $\Lambda_i \subset \mathbb P^n$. Since the union of two hyperplanes $\Lambda_1\cup \Lambda_2$ is the zero locus of a quadratic polynomial vanishing on $\Gamma$ since it is the product of two linear forms of codimension 1, we must have $q \in \Lambda_1\cup \Lambda_2$. In particular, $q$ must lie on one particular hyperplane. 
+
+$\newline$Now, let $p_1, \dots, p_k$ be some minimal subset of $\Gamma$ with $q$ lying in their span. We know that $k\leq n$. So, let $\Sigma \subset \Gamma - \{p_1, \dots, p_k\}$ be any subset of cardinality $n-k+1$; then by the hypothesis of general position, the hyperplane spanned by $p_2,\dots, p_k$ and $\Sigma$ does not contain $p_1$. Then, $\Lambda$ cannot contain $q$, since the span of $p_2, \dots, p_k$ and $q$ contains $p_1$. So, $q$ must lie on the span of $p_1$ and \textit{any} $n-1$ of the points $p_{k+1}, \dots, p_{2n}$. Since the $p_i$ are in general position, the intersection of each of these hyperplanes is just $p_1$, we may conclude that $q=p_1$.
+
+\hfill\qed
+
+
+
+\subsection{The Twisted Cubic \& Rational Normal Curves}
+Consider the map 
+\begin{align*}
+    v:\mathbb P^1 &\to \mathbb P^3\\
+    [x_0:x_1]&\mapsto[x_0^3:x_0^2x_1:x_0x_1^2:x_1^3],
+\end{align*}
+with 
+\[
+C = \text{im }v.
+\]
+Then $C$ lies on three quadric surfaces given by the zero locus of
+\begin{align*}
+    F_0([z_0:z_1:z_2:z_3]) &= z_0z_2-z_1^2,\\
+    F_1([z_0:z_1:z_2:z_3]) &= z_0z_3-z_1z_2, \text{ and, } \\
+    F_2([z_0:z_1:z_2:z_3]) &= z_1z_3-z_2^2.
+\end{align*}
+Respectively, this is the same as the intersection of the three surfaces, and we call $C$ the ``twisted cubic." Namely, if $p \in \mathbb P^3$ satisfies $F_0 \cap F_1 \cap F_2$, either the $z_0$ or $z_3$ coordinate of $p$ must be nonzero, since
+\[
+z_0z_2-z_1^2 - z_0z_3+z_1z_2 - z_1z_3+z_2^2 =0.
+\]
+For example, if $z_0=0$ at $p$, we can solve for $z_3$ and $p$ is contained in a subsurface determined by $z_1$ and $z_2$. At the same time, $C$ is not merely the intersection of either two quadrics. $F_i\cap F_j$ is in fact the union of a line with $C$ as follows. We can parameterize this with $\mathbb P^2$ so that for 
+\[
+\lambda = [\lambda_0:\lambda_1:\lambda_2] \in \mathbb P^2,
+\]
+if 
+\[
+F_\lambda = \lambda_0 F_0 + \lambda_1 F_1 + \lambda_2 F_2,
+\]
+then $F_{[1:1:0]},F_{[1:0:1]},F_{[0:1:1]} \neq C $, but is the union of a linear form with $C$, since the tangent space is determined by $4$ linear equations, each of which lie on the curve. As an example, take,
+\[
+F_{[1:1:0]} = z_0z_2-z_1^2 + z_0z_3 -z_1z_2 = z_0(z_2+z_3)-z_1(z_1+z_2)
+\]
+and
+\[
+\frac{\partial F_{[1:1:0]}}{\partial z_0} = z_2+z_3.
+\]
+This curve is a specific example of a type of curve called a ``rational normal curve." We define the rational normal curve of degree $d$ to be the image of the map
+\begin{align*}
+    v_d: \mathbb P^1 &\to \mathbb P^d\\
+    [x_0:x_1] &\mapsto [x_0^d:x_0^{d-1}x_1:\dots:x_0x_1^{d-1}:x_1^d].
+\end{align*}
+This is seen to, again, be the common zero locus of the polynomials,
+\[
+F_{i,j}(z) = z_iz_j - z_{i-1}z_{j+1},
+\]
+where $1\leq i \leq j \leq d-1$.
+
+$\newline$Remark: any $d+1$ points of a rational normal curve are linearly independent. This may or may not come up later if we talk about Vandermonde matrices and their determinants.
+
+
+\subsubsection{Determinantal Representation of the Rational Normal}
+Speaking of determinants: we can describe some projective varieties in terms of the determinant of the minors of a matrix. There are neat reasons for this related to the exterior algebra over $\complex$, but that is beyond the scope of this lecture. At any rate, if a variety can be described by the zero locus of the determinant of the minors of a matrix, we call it a determinantal variety. The rational normal curve is a determinantal variety: specifically, for any $k \in 1, \dots, d-1$, the rational normal curve is the locus of points $[z_0 : \dots : z_d] \in \mathbb P^d$ such that the rank of the following matrix is $1$.
+\[
+\begin{bmatrix}
+    z_0 & z_1 &z_2 & \dots & \dots & z_{k-1} &z_k\\
+    z_1 & z_2 & \dots & \dots & \dots & \dots & z_{k+1}\\
+    z_2 & \dots & \dots & \dots & \dots & \dots &\dots\\
+    \dots & \dots & \dots & \dots & \dots & \dots &\dots\\
+    \dots & \dots & \dots & \dots & \dots & \dots & z_{d-1}\\
+    z_{d-k}& \dots & \dots & \dots & \dots & z_{d-1} & z_d 
+\end{bmatrix}
+\]
+
+\subsubsection{A ``Cute" Theorem}
+\begin{thm}
+    [from Harris, 1.18] Through any $d+3$ points in general position in $\mathbb P^d$, there passes a unique rational normal curve.
+\end{thm}
+If you are interested in proving this, look on page $12$ of Harris, and work out exercise 1.19.
+
+\subsection{Plane Conics}
+
+There is another way to realize theorem $2$ for the case $d=2$. Namely, a rational normal curve $C$ of degree $2$ is specified by a homogeneous quadratic polynomial $F([z_0:z_1:z_2])$. This is determined up to multiplication by scalars, and so the set of curves may be identified with a subset of $\mathbb P^5$ by the following embedding:
+\begin{align*}
+    v:\mathbb P^2 &\to \mathbb P^5\\
+    [z_0:z_1:z_2]&\mapsto [z_0^2,z_1^2,z_2^2, z_0z_1,z_0z_2,z_1z_2].
+\end{align*}
+In this way, we can treat $C$ as linear in $\mathbb P^5$; in general we call an element of this projective space a \textit{plane conic curve}, and a rational normal curve (corresponding to an irreducible quadratic polynomial) a \textit{smooth conic}.
+
+$\newline$The subset of conics passing through a given point $p \in \mathbb P^2$ corresponds to a hyperplane in $\mathbb P^5$, and since any $5= 2+3$ hyperplanes in $\mathbb P^5$ must have a common intersection (by Bezout), there exists a conic curve through any five points in $\mathbb P^2$ in general position
+
+$\newline$Remark: the set of conics as a projective space is the first example of a parameter space, which we will discuss further in lecture $4$. Moreover, this embedding is a very important one called the Veronese embedding. We will discuss this map in lecture $2$ as well.
+
+\vspace{11in}
+
+\section{Regular Functions}
+
+\subsection{Continuing Last Lecture}
+Following up on last week's talk, there are some things that I didn't feel like I explained as well as I could have. So, let's clarify them! 
+
+$\newline$
+\underline{\textbf{An Excerpt From A Colloquium Talk:}}
+
+$\newline$Today, we are going to dive into some topics in algebraic geometry surrounding the theory of intersections of algebraic curves. Specifically, we are going to set up and walk through the solution to ``Poncelet's porism," a problem proposed by Jean-Victor Poncelet in 1812, and published in 1814. 
+
+$\newline$The math history here is neat - until Poncelet, we had no reason to use the complex numbers, due to the fact that no geometric construction could be made to justify $\sqrt{-1}$. However, after the Napoleonic wars (which Poncelet participated in as a military engineer for Napoleon), Poncelet was imprisoned for two years, and in those two years, (created and) solved three major issues in math:
+\begin{enumerate}
+    \item Why we need the complex numbers for geometry,
+    \item Why we need ``projective space" for geometry, and,
+    \item Poncelet's Porism.
+\end{enumerate}
+
+$\newline$
+Towards this first point, since our goal is intersection theory, we really need to establish a consistent notion of the number of times which two curves intersect. Consider,
+$\newline$
+We know that the ``number of bumps on a curve" should be the degree of the polynomial defining, i.e., the highest power of $x$ in the polynomial. We can see that the maximum number of intersections of a line with this curve is the degree of the curve, but if we vary the line, we certainly get fewer ``real-valued" intersections. Poncelet showed that these actually show up in the complex plane! So, we want to build a parameter space where the number of intersections of two curves is entirely invariant of the position of the curve, avoiding specialized regions of the parameter space. 
+
+$\newline$We would imagine that this should be $\complex$, however, Poncelet also showed that the complex plane doesn't \textit{quite} do the trick: it is a well known fact that polynomials with real coefficients and one complex root, $\alpha \in \complex \setminus \real$ must have another complex root, $-\alpha$. From this, we see that \textbf{complex roots of polynomials come in pairs}. We also know by the fundamental theorem of algebra that a polynomial of degree $n$ must have $n$ complex roots (not necessarily of the form $a+bi$). 
+
+$\newline$
+So, consider a polynomial of even degree with one $\real$-valued intersection with a line. Where does the extra point happen? In these cases, it necessarily implies a division by zero - and so we would want our point of intersection to occur at infinity. But this cannot be well defined, right?
+
+$\newline$Let's consider another example: 
+\[
+y=x^2
+\]
+\[
+y=2-x^2
+\]
+We can see that ``in general position," we should have four intersections:
+$\newline$
+So where do we place the other two intersections? 
+
+$\newline$This requires the notion of \textit{projective space}, or equivalently, a space where parallel lines meet at infinity. It is a bit complicated to explain why, but this is defined by 
+\[
+\mathbb P^n = \{\text{lines through the origin of }\mathbb C^{n+1}\}.
+\]
+As a practical example, if we take our two parabolas and make the replacement,
+\begin{align*}
+    x \mapsto \frac{x}{z}\\
+    y \mapsto \frac{y}{z},
+\end{align*}
+then we get
+\[
+\frac{y}{z} = \frac{x^2}{z^2} \Rightarrow yz = x^2 \Rightarrow yz-x^2=0
+\]
+and
+\[
+\frac{y}{z} = 2-\frac{x^2}{z^2} \Rightarrow yz = 2z^2-x^2 \Rightarrow  yz - 2z^2+x^2 =0
+\]
+Without working out the gory details, it is clear that the following points satisfy
+\[
+yz - 2z^2+x^2 =yz-x^2=0 \Rightarrow 2x^2 -2z^2=0
+\]
+simultaneously with the original projective equations. The
+points are:
+\begin{itemize}
+    \item $[1:1:1]$
+    \item $[-1:1:1]$
+    \item $[0:1:0]$ with multiplicity 2.
+\end{itemize}
+So,
+\begin{thm}
+    [Bezout's Theorem] For any two smooth, projective curves $f,g \subseteq \mathbb P^2$, of degree $d,e$ respectively, $\#|f \cap g| = de$, counting multiplicity.
+\end{thm}
+
+$\newline$
+Namely, projective space is the space where ``geometry behaves consistently," and Bezout's theorem holds for projective curves.
+
+
+\subsubsection{Colloquialisms in Algebraic Geometry: An Incomplete Dictionary}
+\begin{itemize}
+    \item \textit{Zero Locus / Zero Set:}
+    \item \textit{Affine Space:}
+    \item \textit{Affine Variety:}
+    \item \textit{Projective Space:}
+    \item \textit{Projective Coordinates:}
+    \item \textit{Projective Varieties:}
+    \item \textit{Projective Curves:}
+    \item \textit{Why Projective Space Matters:}
+    \item \textit{Veronese Embedding:}
+    \item \textit{Algebraic Curve:} Polynomial Function
+    \item \textit{Conic Section / Conic:}
+    \item \textit{Quadric Surface:}
+    \item \textit{Rational Normal Curve / Twisted Cubic:}
+\end{itemize}
+
+\subsection{The Zariski Topology}
+To successfully motivate the notion of continuous functions, we need to define a few things:
+\begin{enumerate}
+    \item An affine n-space over a field $k$
+    \item Zero sets of polynomials as algebraic sets
+    \item The Zariski Topology
+    \item Irreducible open subsets
+    \item The affine variety generated by a set of polynomials
+    \item The definition of a continuous map.
+\end{enumerate}
+\begin{definition}
+    We define the \textbf{affine n-space}, $\mathbb{A}^n$ over $k$ to be the set of n-tuples with coordinates in $k^n$. Note, this is \textit{not} the same as the coordinate ring of $k[X]$. 
+\end{definition}
+The notion of affine n-space clearly draws some intuition from vector-space like intuition, but there are some stark differences between vector spaces and affine spaces. The main property which exemplifies this fact is that affine spaces don't preserve anything which varies under linear transformations. As an example, in affine n-space,
+\begin{itemize}
+    \item circles are identified with arbitrary ellipses, and,
+    \item squares are identified with arbitrary parallelograms.
+\end{itemize}
+We can distill this further into a list of ``things which don't make sense" in affine space:
+\begin{enumerate}
+    \item angles
+    \item magnitudes
+    \item zero.
+\end{enumerate}
+In place of these traditional geometric constructions, we are left with other things which ``make sense." Namely this list contains, ellipses, parallelograms, geometric linear invariants (like symmetries), and so on. Having laid a foundational intuition for affine space, we next seek to analyze functions in affine space by examining their zero sets as geometric constructions.
+
+\begin{definition}
+    Let $\{f_1, \dots f_s\} = F \subseteq A = k[X]$. The zero set of these polynomials is defined as follows:
+    \[
+    Z(F) = \{p\in \mathbb{A}^n \text{ ; } f_i(p) = 0\text{ for all i}\}
+    \]
+\end{definition}
+
+$\newline$In conjunction with this definition, we present the following as a means of regarding subsets of $\mathbb{A}^n$ as their own geometric objects:
+
+\begin{definition}
+    $Y \subseteq \mathbb{A}^n$ is called an algebraic set if there exist polynomials $F = \{f_1 \dots f_S\}\subseteq k[X]$ with 
+    \[
+    Y = Z(F).
+    \]
+\end{definition}
+
+$\newline$
+From the notion of algebraic sets, there is induced a natural topology which allows us to probe topological data in affine space. 
+
+\begin{definition}
+    Open subsets in the Zariski Topology on an affine n-space $\mathbb{A}^n$ are subsets whose complements are algebraic sets. Accordingly, closed sets are algebraic sets.
+\end{definition}
+
+$\newline$As an additional structure on the Zariski topology (but really any topology), we are interested in defining the notion of irreducibility. While this may seem disconnected from geometry at first, I encourage the reader to consider other types of irreducible algebraic structures, such as,
+\begin{itemize}
+    \item prime numbers,
+    \item polynomials,
+    \item subspaces,
+    \item etc.
+\end{itemize}
+
+
+\begin{definition}
+    If $\tau$ is a topology on a set $X$, and $U \subseteq X$ is closed, $U$ is irreducible iff there do not exist $V_1,V_2 \subseteq U$, which are also closed, with $V_1\cup V_2 = U$.
+\end{definition}
+
+\subsubsection{Introducing Varieties}
+$\newline$
+Within the scope of algebraic geometry, the notion of an irreducible closed set generalizes itself in the following manner.
+
+\begin{definition}
+    $Y\subseteq \mathbb{A}^n$ is called an affine variety if there exist polynomials $\{f_1, \dots f_s\} = F \subseteq A$ such that $Y = Z(F)$ is irreducible under the induced topology. Respectively, a quasi-affine variety is an open subset of an affine variety.
+\end{definition}
+
+$\newline$\textbf{Remark:} (Notherian topology iff descending chain condition) $\iff$ (Notherian ring iff ascending chain condition)
+
+$\newline$\textbf{Remark:} Quasi-projective varieties are open subsets of projective varieties. In general, when we say ``variety," we will mean a quasi-projective one.
+
+
+\subsection{Some Introductory Commutative Algebra}
+
+Below are some incredibly useful definitions which are required for algebraic geometry. If you haven't taken 430/431, make sure to think about these deeply over the next week! 
+\begin{definition}
+    [Ideal of a Ring] Let $R$ be a ring. Then $I\subset R$ is an ideal if
+    \begin{enumerate}
+        \item For all $a\in I$, $r\in R$, $ar \in I$, and,
+        \item For all $a,b\in I$, $a+b\in I$.
+    \end{enumerate}
+    When $I$ is generated by a list of ring elements, $f_1, \dots, f_n \in R$, we say
+    \[
+    I=\langle f_1, \dots, f_n\rangle.
+    \]
+    Not all ideals are finitely generated. If all of the ideals in a ring are finitely generated, we say that the ring is \textbf{Notherian}.
+\end{definition}
+
+\begin{definition}
+    [Quotient Ring] Let $R$ be a ring with an ideal $I$. Then \[
+    R/I = \{a+\langle I\rangle \mid a \in R\}.
+    \]
+\end{definition}
+
+\begin{thm}
+    [First Homomorphism Theorem] Let $\varphi : R\to R'$ be a ring homomorphism with kernel $K\subset R$. Then,
+    \[
+    R' \cong R/K.
+    \]
+\end{thm}
+
+\begin{thm}
+    Let $f\in \q[x]$ be the minimal polynomial for a root $\alpha\in \complex$. Then 
+    \[
+    \q[x]\bigg/\langle f\rangle \cong \q(\alpha).
+    \]
+    Note that this generalizes for arbitrary base fields.
+\end{thm}
+
+$\newline$Example: $\real[x] / \langle x^2+1\rangle \cong \complex = \real (i)$.
+
+$\newline$\textbf{Proof of theorem 5:}
+Define a ring homomorphism
+\[
+\varphi:\mathbb{Q}[x]\to \mathbb{C}
+\]
+by evaluation at $\alpha$:
+\[
+\varphi(g(x))=g(\alpha).
+\]
+Since $\varphi$ sends rational constants to themselves and sends $x$ to
+$\alpha$, the image of $\varphi$ is
+\[
+\operatorname{im}(\varphi)=\mathbb{Q}[\alpha].
+\]
+Because $\alpha$ is algebraic over $\mathbb{Q}$, we have
+\[
+\mathbb{Q}[\alpha]=\mathbb{Q}(\alpha).
+\]
+
+$\newline$
+Now we compute the kernel. By definition,
+\[
+\ker(\varphi)=\{g(x)\in \mathbb{Q}[x] : g(\alpha)=0\}.
+\]
+Since $f$ is the minimal polynomial of $\alpha$, every polynomial in
+$\mathbb{Q}[x]$ that vanishes at $\alpha$ is divisible by $f$. Therefore
+\[
+\ker(\varphi)=\langle f\rangle.
+\]
+
+$\newline$
+Hence, by the First Isomorphism Theorem for rings,
+\[
+\mathbb{Q}[x]/\ker(\varphi)\cong \operatorname{im}(\varphi).
+\]
+Substituting the kernel and image gives
+\[
+\mathbb{Q}[x]/\langle f\rangle \cong \mathbb{Q}(\alpha).
+\]
+
+\hfill\qed
+
+\subsection{Regular functions on an Affine Variety}
+\begin{definition}
+    [Ideal of a Variety] Let $X\subset \mathbb A^n$ be a variety. We define the ideal of $X$ to be the ideal
+    \[
+    I(X) = \{f\in \mathbb K[z_1,\dots,z_n] \mid f=0 \text{ on X}\}.
+    \]
+\end{definition}
+
+\begin{definition}
+    [Coordinate Ring of X] With the same conventions as above, we define
+    \[
+    \mathbb K[z_1,\dots, z_n] / I(X) = A(X)
+    \]
+    to be the ``coordinate ring" of X.
+\end{definition}
+
+$\newline$Generally, we want to think of the coordinate ring of $X$ as the ring of equivalence classes functions not vanishing on $X$, where two functions are considered equivalent if they differ exactly by a function vanishing on $X$. This is more generally called a regular function - which is useful to us because it can be defined on open subsets of varieties in addition to the varieties themselves:
+
+\begin{definition}
+    [Regular Function on a Variety] Let $U\osub X$ be any Zariski-open set, and $p\in U$ be any point. We say that a function $f$ on $U$ is regular at $p$ if in some neighborhood $V$ of $p$, it is expressible as 
+    \[
+    f=\frac{g}{h}
+    \]
+    where $g,h \in \mathbb K[z_1,\dots,z_n]$ and $h(p)\neq 0$. We say that $f$ is regular on $U$ if it is regular at every point of $U$.
+\end{definition}
+
+\begin{definition}
+    [Ring of Regular Functions \& Localization] Namely, the ring of regular functions of $X$ is the coordinate ring $A(X)$, and if $U=U_f = X\setminus Z(f)$ is a \textbf{distinguished open subset}, then the ring of regular functions on $U$ is the \textbf{localization} $\mathcal O(U) =A(X)[\frac{1}{f}] = A(X) _{\langle f\rangle}$. 
+
+    $\newline$Note that localization by an ideal (like $\langle f\rangle$) means that we are taking all rational forms whose denominators are \textbf{not} in the ideal.
+\end{definition} 
+
+$\newline$\textbf{Example:} The ring of regular functions on $\mathbb A^2 \setminus \{ (0,0)\}$ is \[ \mathbb K[x,y]_{x}\cap \mathbb K[x,y]_{y} = \mathbb K[x,y,x^{-1}] \cap \mathbb K[x,y,y^{-1}] = \mathbb K[x,y].\]
+This is a good example of what we will call a ``rational map" from $V =\mathbb A^2 \setminus \vec 0 \to \mathbb A^2$. Namely, since $V$ is clearly quasi-affine, we say that $V$ is birational onto $\mathbb A^2$ - isomorphic except in finitely many points. This is shown by the fact that their coordinate rings are isomorphic.
+
+$\newline$\textbf{Next Time:}
+\begin{enumerate}
+    \item Projective varieties,
+    \item Regular maps (morphisms of varieties), and
+    \item Revisiting the Veronese map (among others).
+\end{enumerate}
+
+
+\section{Regular Maps \& Some Crucial Examples}
+\subsection{Regular Maps}
+A regular map from an arbitrary variety $X$ to $\A^n$, is a map given by an $n$-tuple of regular functions on $X$.
+
+$\newline$A map of $X$ to an affine variety $Y\subset \A^n$ is a map to $\A^n$ with image contained in $Y$. 
+
+$\newline$Two affine varieties $X$ and $Y$ are isomorphic if there exist regular maps $\eta:X\to Y$ and $\varphi:Y\to X$ inverse to one another in both directions, or equivalently if their coordinate rings are isomorphic as algebras over $\mathbb K$
+\[
+A(X) \cong A(Y).
+\]
+
+$\newline$Maps to projective space are more complicated; we say that a map $\varphi:X\to \p^n$ is regular if it is regular locally, i.e., if it is continuous and regular over the inverse image of each affine slice of $\p^n$. A better way to think of this would be to specify an $(n+1)$-tuple of regular functions, but this may not be possible if $X$ is projective. 
+
+$\newline$If $X\subset \p^m$ is projective, we may specify a map of $X\to \p^n$ by giving an $(n+1)$-tuple of homogeneous polynomials of the same degree, as long as they are not simultaneously zero anywhere on $X$.
+
+$\newline$\textbf{Small Example:} Consider the variety $C\subset \p^2$ given by $x^2+y^2-z^2$, and the map
+\[
+\varphi:C\to \p^1
+\]
+by
+\[
+[x:y:z] \mapsto [x:z-y].
+\]
+This may be thought of as stereographic projection from the point $p=[0:1:1]$. It sends a point $r\in C$ (where $r\neq p$) to the point of intersection of the axis $(y=0)$ with the line $\overline{pr}$. Note that at $r=p$, this map doesn't make sense, but since $p$ was an arbitrary choice, we can extend the map to a regular one by defining $\varphi(p) = [1:0]$.
+
+$\newline$To verify this, take $[s:t]$ on $\p^1$ with affine opens $U_0 :(s\neq 0)$ and $U_1 = t\neq 0$. We have 
+\[
+\varphi^{-1}(U_0) = C-\{[0:-1:1]\}
+\]
+and
+\[
+\varphi^{-1}(U_0) = C-\{[0:1:1]\}.
+\]
+Now, on $\varphi^{-1}(U_1)$, the map $\varphi$ is clearly regular; in terms of the coordinate $S = s/t$ on $U_1$, the restriction of $\varphi$ is given by
+\[
+[x:y:z] \mapsto \frac{x}{z-y},
+\]
+which is clearly regular on $C-\{[0,1,1]\}$. On the other hand, on $\varphi^{-1}(U_0)$, we can write the map in terms of $T=t/s$ as 
+\[
+[x:y:z] \mapsto \frac{z-y}{x}.
+\]
+This may not appear to be regular at $p=[0:1:1]$, but we can write
+\[
+\frac{z-y}{x}\left(\frac{z+y}{z+y}\right) = \frac{z^2-y^2}{x(y+z)} = \frac{x^2}{x(y+z)} = \frac{x}{y+z},
+\]
+which is clearly regular on $C-\{[0:-1:1]\}$. It is worth noting that this \textit{is} and example where the map $C\to \p^1$ cannot be given by a pair of homogeneous polynomials without common zeroes on $C$.
+
+\subsection{Canonical Examples}
+\subsubsection{The Veronese Map}
+Suppose we are given a projective variety cut out of $\p^n$ by some homogeneous polynomial $f$ of degree $d$. Sometimes, we are lucky enough to be able to describe such curves simply - in either finite or enumerable sets. Often though, this is not the case. So, since each monomial term of $f$ has degree $d$, perhaps there is a way to view the variety cut out by $f$ in terms of a linear subspace of a larger space! This is the crucial notion undergirding the construction of the Veronese map. 
+
+$\newline$We will define the Veronese map of degree $d$,
+\[
+v_{n,d}: \p^n \to \p^{{n+d\choose d}-1}
+\]
+by sending 
+\[
+[x_0:x_1:\dots:x_n] \mapsto [\text{power products of }x_i \text{ terms of degree }d].
+\]
+We have, in fact, already encountered the Veronese map in Lecture 1 through the rational normal curve (and the twisted cubic, a special case of the rational normal curve). 
+
+\begin{thm}
+    The number of monomials of degree $d$ in $n+1$ variables is ${n+d\choose d}$. 
+\end{thm}
+
+$\newline$It is noteworthy that the implicit geometry of the Veronese map is characterized by the property that hypersurfaces of degree $d$ in $\p^n$ are exactly the hyperplane sections of the image 
+\[
+v_{n,d}(\p^n) \subset \p^{{n+d\choose d}-1}.
+\]
+Moreover, the Veronese variety $v_{n,d}(\p^n)$ lies on a number of obvious quadratic surfaces. 
+
+\begin{thm}
+    If $X$ is a projective variety, $Y=v_{n,d}(X) \subset \p^{{n+d\choose d}-1}$ is a projective variety. Moreover, $X\cong_{var}Y$.
+\end{thm}
+
+\begin{cor}
+    Any projective variety is isomorphic to an intersection of a Veronese variety with a linear space.
+\end{cor}
+
+
+\subsubsection{The Segre Maps}
+For those familiar with tensor products of vectors, the Segre map will come quite easily: namely given coordinates $x=[x_0:\dots:x_r] \in \p^r, y=[y_0:\dots:y_s] \in \p^s$, the Segre map $\sigma_{r,s}$ has
+\begin{align*}
+    \sigma_{r,s}:\p^r\times \p^s &\to \p^{(r+1)(s+1)-1}\\
+    ([x_0:\dots:x_r],[y_0:\dots:y_s]) &\mapsto [\dots :x_iy_j:\dots]\\
+    \text{or eq}&\text{uivalently,}\\
+    (x,y) &\mapsto x\otimes y
+\end{align*}
+
+$\newline$\textbf{Example:} Consider $\sigma_{1,1}$, which is defined by the four forms
+\[
+[x_0:x_1],[y_0:y_1] \mapsto [x_0y_0:x_0y_1:x_1y_0:x_1y_1]=[a:b:c:d] \in \p^3.
+\]
+Namely, the image of $\sigma_{1,1}$ satisfies
+\[
+ac-bd=0,
+\]
+and so is the nonsingular quadric surface in $\p^3$.
+$\newline$\textbf{Crucial intuition for quadric surfaces:} the quadric surface in $\p^n$ is of course characterized by the image of a collection of $n+1$ quadratic forms on a projective space, and so we should imagine that at each point $p$, there are $n$ lines defining the tangent space, $T_p(\sigma_{r,s})$. 
+
+
+\subsubsection{Just Enough Category Theory To Be Mildly Harmful}
+Algebraic geometry is highly dependent on category theory to perform many computations; in some ways, it is an unfortunate fact that we will have to cover a great deal of category theory and homological algebra to obtain certain constructions. At the moment, it isn't crucial to know that much category theory, besides the content provided below. 
+
+
+\vspace{11in}
+
+\section{Rational Maps and Blowups of Varieties}
+.
+
+\section{Properties of (Affine) Schemes}
+.
+\section{The Proj Construction, Morphisms of Schemes, Classification of Schemes}
+.
+\section{Closed Embeddings, Cartier Divisors}
+.
+\section{Dimension, Regularity, and Smoothness}
+.
+\section{Line Bundles, Weil Divisors, and Maps to Projective Space}
+.
+\section{Cech Cohomology of Quasi-Coherent Sheaves}
+.
+\section{Cohomology of line bundles on $\p^n$ and Riemann-Roch}
+.
+\section{Hilbert Polynomials}
+.
+\section{Application: Algebraic Curves!}
+.
+\section{Back to Divisors: Algebraic Cycles and the Chow Ring}
+.
+\section{Application: $\text{CH}^*(\mathbb G(k,n))$ and enumerative geometry}
+.
+\section{Differentials, the Cotangent Bundle, and the Riemann-Hurewitz Formula}
+.
+
+\section{A Brief Detour: DeRham Cohomology and Canonical Classes of Schemes}
+.
+\section{Chern Classes}
+.
+\section{The 27 Lines Theorem}
+.
+
+\end{document}
